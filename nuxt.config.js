@@ -195,7 +195,7 @@ export default {
   proxy: {
     '/api': {
       target: process.env['API_URL'],
-      agent: process.env['API_URL'].startsWith('http://') ? new http.Agent({keepAlive: true}) : process.env['API_URL'].startsWith('https://') ? new https.Agent({keepAlive: true}) : undefined
+      agent: !process.env['API_URL'] ? undefined : process.env['API_URL'].startsWith('https://') ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true })
     }
   },
   env: {
