@@ -4,9 +4,11 @@ const http = require('http')
 const https = require('https')
 require('dotenv').config()
 
-const IS_MAIN = process.env['NETWORK'] === 'mainnet'
-const IS_DEV = process.env.NODE_ENV === 'development'
-const title = IS_MAIN ? '' : '(Test)'
+const network = process.env.NETWORK
+const environment = process.env.NODE_ENV
+const IS_MAIN = process.env.NETWORK === 'mainnet'
+const IS_DEV = process.env.NODE_ENV === 'dev'
+const title = IS_MAIN ? '' : ' (Test)'
 const Version = process.env.COMMIT_REV
 
 export default {
@@ -15,7 +17,7 @@ export default {
   },
   serverMiddleware: [
     { path: '/', handler: morgan('tiny') },
-    { path: '/api/export', handler: '~/server/captcha.js'}
+    { path: '/api/export', handler: '~/server/captcha.js' }
   ],
   mode: 'universal',
   /*
@@ -27,13 +29,13 @@ export default {
       { charset: 'utf-8' },
       {
         name: 'viewport',
-        content: 'width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, maximum-scale=1'
+        content:
+          'width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, maximum-scale=1'
       },
       {
         hid: 'description',
         name: 'description',
-        content:
-          `VeChain Explorer${title} enables you to explore and search transactions, addresses,  and other activities taking place on the VeChainThor blockchain`
+        content: `VeChain Explorer${title} enables you to explore and search transactions, addresses,  and other activities taking place on the VeChainThor blockchain`
       },
       {
         name: 'keywords',
@@ -43,10 +45,12 @@ export default {
         name: 'format-detection',
         content: 'telephone=no'
       },
-      IS_MAIN ? {
-        name: 'google-site-verification',
-        content: 'yvT2mNLTy-gN9NFUXxNNJR7zIsWLrEvcWNZg_m91pwA'
-      } : {}
+      IS_MAIN
+        ? {
+            name: 'google-site-verification',
+            content: 'yvT2mNLTy-gN9NFUXxNNJR7zIsWLrEvcWNZg_m91pwA'
+          }
+        : {}
     ],
     script: [
       {
@@ -54,11 +58,10 @@ export default {
         json: {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          url: `https://explore${IS_MAIN ? '' : '-testnet'}.vechain.org/`,
+          url: `https://${network}.${environment}.vechain.org/`,
           potentialAction: {
             '@type': 'SearchAction',
-            target:
-              `https://explore${IS_MAIN ? '' : '-testnet'}.vechain.org/search?content={search_term_string}`,
+            target: `https://${network}.${environment}.vechain.org/search?content={search_term_string}`,
             'query-input': 'required name=search_term_string'
           }
         }
@@ -68,7 +71,8 @@ export default {
       {
         rel: 'icon',
         href: `/favicon.png`
-      }, {
+      },
+      {
         rel: 'search',
         type: 'application/opensearchdescription+xml',
         href: `/opensearch.xml`,
@@ -139,7 +143,7 @@ export default {
    ** Nuxt.js dev-modules
    */
   buildModules: [
-    '@nuxt/typescript-build',
+    '@nuxt/typescript-build'
     // Doc: https://github.com/nuxt-community/eslint-module
     // '@nuxtjs/eslint-module',
   ],
@@ -151,7 +155,8 @@ export default {
     id: `UA-132391998-${IS_MAIN ? 3 : 4}`,
     set: [
       {
-        field: 'anonymizeIp', value: 1
+        field: 'anonymizeIp',
+        value: 1
       }
     ],
     dev: false,
@@ -194,8 +199,12 @@ export default {
    */
   proxy: {
     '/api': {
-      target: process.env['API_URL'],
-      agent: !process.env['API_URL'] ? undefined : process.env['API_URL'].startsWith('https://') ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true })
+      target: process.env.API_URL,
+      agent: !process.env.API_URL
+        ? undefined
+        : process.env.API_URL.startsWith('https://')
+        ? new https.Agent({ keepAlive: true })
+        : new http.Agent({ keepAlive: true })
     }
   },
   env: {
@@ -204,11 +213,15 @@ export default {
     networks: [
       {
         text: 'Main',
-        link: 'https://explore.vechain.org'
+        link: `https://mainnet.${
+          environment == 'dev' ? 'dev.' : ''
+        }explore.vechain.org/`
       },
       {
         text: 'Test',
-        link: 'https://explore-testnet.vechain.org'
+        link: `https://testnet.${
+          environment == 'dev' ? 'dev.' : ''
+        }explore.vechain.org/`
       }
     ]
   },
@@ -219,7 +232,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) { },
+    extend(config, ctx) {},
     extractCSS: !IS_DEV,
     optimization: {
       splitChunks: {
