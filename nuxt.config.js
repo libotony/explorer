@@ -4,9 +4,10 @@ const http = require('http')
 const https = require('https')
 require('dotenv').config()
 
-const IS_MAIN = process.env['NETWORK'] === 'mainnet'
-const IS_DEV = process.env.NODE_ENV === 'development'
-const title = IS_MAIN ? '' : '(Test)'
+const network = process.env.NETWORK
+const environment = process.env.NODE_ENV
+const IS_MAIN = process.env.NETWORK === 'mainnet'
+const IS_DEV = process.env.NODE_ENV === 'dev'
 const title = IS_MAIN ? '' : ' (Test)'
 const Version = process.env.COMMIT_REV
 
