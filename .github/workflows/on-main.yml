@@ -1,0 +1,31 @@
+name: Main Merge - Build & Publish Images
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+  publish-images-to-ecr:
+    name: Build Images & Publish to ECR
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        env: [dev, prod]
+        application: [explore]
+    uses: ./.github/workflows/publish-ecr-image.yml
+    with:
+      latestTag: ${{ matrix.env }}-latest
+      imageTag: ${{ github.sha }}
+      workingDirectory: ./
+      packageName: ${{ matrix.application }}
+      imagePlatform: linux/arm64
+      env: ${{ matrix.env }}
