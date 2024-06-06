@@ -1,5 +1,4 @@
-name: Main Merge - Publish Images & Deploy Dead Color (if exists)
-
+name: Main Merge - Build & Publish Images
 on:
   workflow_dispatch:
   push:
