@@ -213,15 +213,15 @@ export default {
     networks: [
       {
         text: 'Main',
-        link: `https://${
-          environment == 'dev' ? 'dev.' : ''
-        }explore.vechain.org/`
+        link: environment === 'dev'
+          ? 'https://mainnet.dev.explore.vechain.org'
+          : 'https://explore.vechain.org'
       },
       {
         text: 'Test',
-        link: `https://${
-          environment == 'dev' ? 'dev.' : ''
-        }explore-testnet.vechain.org/`
+        link: environment === 'dev'
+          ? 'https://testnet.dev.explore.vechain.org'
+          : 'https://explore-testnet.vechain.org'
       }
     ]
   },
