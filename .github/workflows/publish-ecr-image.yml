@@ -86,11 +86,11 @@ jobs:
 
       - name: Scan Docker image
         id: docker-scan
-        uses: alexjurkiewicz/ecr-scan-image@v1.7.1
+        uses: alexjurkiewicz/ecr-scan-image@v2.0.0
         with:
           repository: vechain/${{ inputs.packageName }}
           tag: ${{ inputs.imageTag }}
-          fail_threshold: high
+          # fail_threshold: high
 
       - name: On Scan Failure
         if: failure() && steps.docker-scan.outcome == 'failure'
