@@ -4,6 +4,8 @@ FROM node:16-alpine
 # Set the working directory in the container
 WORKDIR /app
 
+RUN apk upgrade --no-cache && apk add --no-cache git
+
 # Copy files to the working directory
 COPY . .
 
