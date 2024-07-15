@@ -17,6 +17,7 @@
                     }"
                         >{{tx.blockNumber | numFmt}}</nuxt-link>
                     </template>
+                    <b-badge v-if="tx.type && tx.type==81" class="ml-2 small">Type Dynamic Fee</b-badge>
                 </h5>
             </div>
             <b-nav class="border-0" tabs align="left">

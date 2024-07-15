@@ -92,6 +92,7 @@ declare namespace DTO {
     blockID: string
     blockNumber: number
     blockTimestamp: number
+    blockBaseFeePerGas: string|null
   }
   type Token = {
     name: string
@@ -127,6 +128,7 @@ declare namespace DTO {
     decimals: number
   }
   type Receipt = {
+    type: number
     txID: string
     gasUsed: number
     gasPayer: string
@@ -150,6 +152,7 @@ declare namespace DTO {
   }
 
   type Tx = {
+    type: number
     blockRef: string
     chainTag: number
     clauses: Clause[]
@@ -160,7 +163,9 @@ declare namespace DTO {
     nonce: string
     origin: string
     size: number
-    gasPriceCoef: number
+    gasPriceCoef?: number
+    maxFeePerGas?: string
+    maxPriorityFeePerGas?:string
     txID: string
     state: 'PENDING' | 'EXPIRED' | 'DEP REVERTED'
     reverted: boolean
@@ -206,6 +211,7 @@ declare namespace DTO {
     txsFeatures: number
     score: number
     reward: string
+    baseFeePerGas: string|null
     size: number
   }
 

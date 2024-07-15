@@ -208,7 +208,7 @@ class Svc implements IfcSvc {
 export default function (ctx: Context, inject: any) {
   ctx.$axios.onResponseError((error: AxiosError) => {
     // silence urls
-    const urls = ['/api/blocks/best', '/api/blocks/recent', '/api/transactions/recent', '/api/registry/price']
+    const urls = ['/api/blocks/best', '/api/blocks/recent', '/api/transactions/recent', '/api/registry/price', '/api/chain/head']
     if (urls.includes(error.response!.config.url || '')) {
       return
     }
@@ -221,7 +221,7 @@ export default function (ctx: Context, inject: any) {
   })
 
   ctx.$axios.onRequest((config: any) => {
-    const urls = ['/api/blocks/best', '/api/blocks/recent', '/api/transactions/recent', 'api/chain/status']
+    const urls = ['/api/blocks/best', '/api/blocks/recent', '/api/transactions/recent', 'api/chain/status', '/api/chain/head']
     if (urls.indexOf(config.url) >= 0) {
       config.progress = false
     }

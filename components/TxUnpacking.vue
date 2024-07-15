@@ -49,10 +49,20 @@
                     <span>{{tx.gas | numFmt}}</span>
                 </template>
             </ListItem>
-            <ListItem>
+            <ListItem v-if="tx.type !==81">
                 <template slot="label">Gas Price Coef</template>
                 <template slot="item-content">
                     <span>{{tx.gasPriceCoef}}</span>
+                </template>
+            </ListItem>
+            <ListItem v-if="tx.type === 81">
+                <template slot="label">Gas Fees</template>
+                <template slot="item-content">
+                    <span class="text-secondary">Max:</span>
+                    <Fee :amount="tx.maxFeePerGas"></Fee>
+                    <span class="text-secondary mx-2">|</span>
+                    <span class="text-secondary">MaxPriority:</span>
+                    <Fee :amount:="tx.maxPriorityFeePerGas"></Fee>
                 </template>
             </ListItem>
             <ListItem>
@@ -121,6 +131,7 @@ import AccountLink from '@/components/AccountLink.vue'
 import TxLink from '@/components/TxLink.vue'
 import TokenTransferItem from '@/components/TokenTransferItem.vue'
 import Amount from '@/components/Amount.vue'
+import Fee from '@/components/Fee.vue'
 
 @Component({
     components: {
@@ -129,7 +140,8 @@ import Amount from '@/components/Amount.vue'
         TokenTransferItem,
         AccountLink,
         Amount,
-        TxLink
+        TxLink,
+        Fee
     }
 })
 export default class TxInfo extends Vue {
