@@ -12,6 +12,9 @@ COPY . .
 # Install dependencies
 RUN npm ci
 
+# Build the app
+RUN npm run build
+
 # Default port
 ENV PORT=8080
 
@@ -19,4 +22,4 @@ ENV PORT=8080
 EXPOSE ${PORT}
 
 # Command to run the application
-CMD ["npm", "run", "build-and-start"]
+CMD ["npm", "run", "start"]
