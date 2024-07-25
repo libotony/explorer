@@ -19,6 +19,13 @@ export default {
     { path: '/', handler: morgan('tiny') },
     { path: '/api/export', handler: '~/server/captcha.js' }
   ],
+  hooks: {
+    listen (server) {
+      if (process.env.KEEP_ALIVE_TIMEOUT) {
+        server.keepAliveTimeout = parseInt(process.env.KEEP_ALIVE_TIMEOUT) * 1000
+      }
+    }
+  },
   mode: 'universal',
   /*
    ** Headers of the page
