@@ -80,7 +80,7 @@
                     <Fee :amount="maxFee"></Fee>
                     <span class="text-secondary mx-2">|</span>
                     <span class="text-secondary">MaxPriority:</span>
-                    <Fee :amount:="maxPriorityFee"></Fee>
+                    <Fee :amount="maxPriorityFee"></Fee>
                 </template>
             </ListItem>
             <ListItem>
@@ -289,10 +289,12 @@ export default class TxInfo extends Vue {
 
     get maxPriorityFee() {
         if (this.tx.type && this.tx.type === 81) {
-            return this.tx.maxFeePerGas
+            return this.tx.maxPriorityFeePerGas
         }
 
-        return new BigNumber(this.tx.reward).div(this.tx.gasUsed).plus(this.tx.blockBaseFeePerGas as string).toString()
+        const priority = new BigNumber(this.tx.reward).div(this.tx.gasUsed).plus(this.tx.blockBaseFeePerGas as string).toString()
+        console.log(priority)
+        return priority
     }
 
     blockRefNum(blockRef: string) {
