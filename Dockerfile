@@ -19,4 +19,4 @@ ENV PORT=8080
 EXPOSE ${PORT}
 
 # Command to run the application
-CMD ["npm", "run", "build-and-start"]
+CMD ["/bin/sh", "./startup.sh"]

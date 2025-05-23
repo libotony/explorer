@@ -1,7 +1,7 @@
 import bvConfig from './bootstrapVue.config'
-const morgan = require('morgan')
 const http = require('http')
 const https = require('https')
+const morgan = require('morgan')
 require('dotenv').config()
 
 const network = process.env.NETWORK
@@ -12,240 +12,240 @@ const title = IS_MAIN ? '' : ' (Test)'
 const Version = process.env.COMMIT_REV
 
 export default {
-  server: {
-    host: '0.0.0.0'
-  },
-  serverMiddleware: [
-    { path: '/', handler: morgan('tiny') },
-    { path: '/api/export', handler: '~/server/captcha.js' },
-    { path: '/health', handler: '~/server/health.js' }
-  ],
-  mode: 'universal',
-  /*
-   ** Headers of the page
-   */
-  head: {
-    title: `VeChain Explorer${title}`,
-    meta: [
-      { charset: 'utf-8' },
-      {
-        name: 'viewport',
-        content:
-          'width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, maximum-scale=1'
-      },
-      {
-        hid: 'description',
-        name: 'description',
-        content: `VeChain Explorer${title} enables you to explore and search transactions, addresses,  and other activities taking place on the VeChainThor blockchain`
-      },
-      {
-        name: 'keywords',
-        content: 'vechain, explorer, vet, vtho, search, blockchain, official'
-      },
-      {
-        name: 'format-detection',
-        content: 'telephone=no'
-      },
-      IS_MAIN
-        ? {
-            name: 'google-site-verification',
-            content: 'yvT2mNLTy-gN9NFUXxNNJR7zIsWLrEvcWNZg_m91pwA'
-          }
-        : {}
-    ],
-    script: [
-      {
-        type: 'application/ld+json',
-        json: {
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          url: `https://${network}.${environment}.vechain.org/`,
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: `https://${network}.${environment}.vechain.org/search?content={search_term_string}`,
-            'query-input': 'required name=search_term_string'
-          }
-        }
-      }
-    ],
-    link: [
-      {
-        rel: 'icon',
-        href: `/favicon.png`
-      },
-      {
-        rel: 'search',
-        type: 'application/opensearchdescription+xml',
-        href: `/opensearch.xml`,
-        title: `VeChain ${IS_MAIN ? '' : 'Testnet'} Explorer`
-      }
-    ]
-  },
-  pwa: {
-    manifest: {
-      name: `VeChain Explorer${title}`,
-      lang: 'en',
-      short_name: `VeChain Explorer${title}`,
-      theme_color: '#d2d2d2'
+    server: {
+        host: '0.0.0.0'
     },
-    icon: {
-      iconSrc: `./static/icon.png`,
-      sizes: [144, 152, 192, 384, 512]
-    },
-    meta: {
-      name: `VeChain Explorer${title}`,
-      ogSiteName: `VeChain Explorer${title}`,
-      ogTitle: `VeChain Explorer${title}`,
-      ogDescription: `VeChain Explorer${title} enables you to explore and search transactions, addresses,  and other activities taking place on the VeChainThor blockchain`
-    },
-    workbox: {
-      runtimeCaching: [
-        {
-          urlPattern: 'https://vechain.github.io/token-registry/assets/',
-          strategyOptions: {
-            cacheName: 'git-static'
-          }
-        }
-      ],
-      cacheNames: {
-        prefix: `explorer-${IS_MAIN ? 'mainnet' : 'testnet'}`,
-        suffix: Version,
-        precache: 'precache',
-        runtime: 'runtime'
-      }
-    }
-  },
-  /*
-   ** Customize the progress-bar color
-   */
-  loading: { color: '#fff' },
-  /*
-   ** Global CSS
-   */
-  css: [
-    '@fortawesome/fontawesome-svg-core/styles.css',
-    '@/css/common.css',
-    !IS_MAIN ? '@/css/test.css' : '@/css/main.css'
-  ],
-  /*
-   ** Plugins to load before mounting the App
-   */
-  plugins: [
-    '~/plugins/filters.ts',
-    '~/plugins/fontawesome.ts',
-    '~/plugins/axios.ts',
-    { src: '~/plugins/init.ts', mode: 'client' },
-    { src: '~/plugins/captcha.ts', mode: 'client' },
-    { src: '~/plugins/clipboard.ts', mode: 'client' },
-    { src: '~/plugins/qrcode.ts', mode: 'client' },
-    { src: '~/plugins/sw.ts', mode: 'client' }
-  ],
-  /*
-   ** Nuxt.js dev-modules
-   */
-  buildModules: [
-    '@nuxt/typescript-build'
-    // Doc: https://github.com/nuxt-community/eslint-module
-    // '@nuxtjs/eslint-module',
-  ],
-  /**
-   * Analytics
-   * See https://github.com/nuxt-community/analytics-module
-   */
-  googleAnalytics: {
-    id: `UA-132391998-${IS_MAIN ? 3 : 4}`,
-    set: [
-      {
-        field: 'anonymizeIp',
-        value: 1
-      }
+    serverMiddleware: [
+        { path: '/', handler: morgan('tiny') },
+        { path: '/api/export', handler: '~/server/captcha.js' },
+        { path: '/health', handler: '~/server/health.js' }
     ],
-    dev: false,
-    autoTracking: {
-      pageviewTemplate(route) {
-        return {
-          page: route.path,
-          title: route.name,
-          location: window.location.href
-        }
-      }
-    }
-  },
-  /*
-   ** Nuxt.js modules
-   */
-  modules: [
-    // Doc: https://bootstrap-vue.js.org
-    'bootstrap-vue/nuxt',
-    // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
-    '@nuxtjs/pwa',
-    '@nuxtjs/google-analytics',
-    '@blokwise/dynamic'
-  ],
-  /**
-   * BootstrapVue Config
-   * See https://bootstrap-vue.js.org/docs
-   */
-  bootstrapVue: bvConfig,
-  /*
-   ** Axios module configuration
-   ** See https://axios.nuxtjs.org/options
-   */
-  axios: {
-    proxy: true
-  },
-  /**
-   * https://github.com/chimurai/http-proxy-middleware#appusepath-proxy
-   */
-  proxy: {
-    '/api': {
-      target: process.env.API_URL,
-      agent: !process.env.API_URL
-        ? undefined
-        : process.env.API_URL.startsWith('https://')
-        ? new https.Agent({ keepAlive: true })
-        : new http.Agent({ keepAlive: true })
-    }
-  },
-  env: {
-    current: !IS_MAIN ? 'Testnet' : 'Mainnet',
-    Version,
-    networks: [
-      {
-        text: 'Main',
-        link: environment === 'dev'
-          ? 'https://mainnet.dev.explore.vechain.org'
-          : 'https://explore.vechain.org'
-      },
-      {
-        text: 'Test',
-        link: environment === 'dev'
-          ? 'https://testnet.dev.explore.vechain.org'
-          : 'https://explore-testnet.vechain.org'
-      }
-    ]
-  },
-  /*
-   ** Build configuration
-   */
-  build: {
+    mode: 'universal',
     /*
-     ** You can extend webpack config here
+     ** Headers of the page
      */
-    extend(config, ctx) {},
-    extractCSS: !IS_DEV,
-    optimization: {
-      splitChunks: {
-        cacheGroups: {
-          styles: {
-            name: 'theme',
-            test: /\.(css|vue)$/,
-            chunks: 'all',
-            enforce: true
-          }
+    head: {
+        title: `VeChain Explorer${title}`,
+        meta: [
+            { charset: 'utf-8' },
+            {
+                name: 'viewport',
+                content:
+                    'width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, maximum-scale=1'
+            },
+            {
+                hid: 'description',
+                name: 'description',
+                content: `VeChain Explorer${title} enables you to explore and search transactions, addresses,  and other activities taking place on the VeChainThor blockchain`
+            },
+            {
+                name: 'keywords',
+                content: 'vechain, explorer, vet, vtho, search, blockchain, official'
+            },
+            {
+                name: 'format-detection',
+                content: 'telephone=no'
+            },
+            IS_MAIN
+                ? {
+                    name: 'google-site-verification',
+                    content: 'yvT2mNLTy-gN9NFUXxNNJR7zIsWLrEvcWNZg_m91pwA'
+                }
+                : {}
+        ],
+        script: [
+            {
+                type: 'application/ld+json',
+                json: {
+                    '@context': 'https://schema.org',
+                    '@type': 'WebSite',
+                    url: `https://${network}.${environment}.vechain.org/`,
+                    potentialAction: {
+                        '@type': 'SearchAction',
+                        target: `https://${network}.${environment}.vechain.org/search?content={search_term_string}`,
+                        'query-input': 'required name=search_term_string'
+                    }
+                }
+            }
+        ],
+        link: [
+            {
+                rel: 'icon',
+                href: '/favicon.png'
+            },
+            {
+                rel: 'search',
+                type: 'application/opensearchdescription+xml',
+                href: '/opensearch.xml',
+                title: `VeChain ${IS_MAIN ? '' : 'Testnet'} Explorer`
+            }
+        ]
+    },
+    pwa: {
+        manifest: {
+            name: `VeChain Explorer${title}`,
+            lang: 'en',
+            short_name: `VeChain Explorer${title}`,
+            theme_color: '#d2d2d2'
+        },
+        icon: {
+            iconSrc: './static/icon.png',
+            sizes: [144, 152, 192, 384, 512]
+        },
+        meta: {
+            name: `VeChain Explorer${title}`,
+            ogSiteName: `VeChain Explorer${title}`,
+            ogTitle: `VeChain Explorer${title}`,
+            ogDescription: `VeChain Explorer${title} enables you to explore and search transactions, addresses,  and other activities taking place on the VeChainThor blockchain`
+        },
+        workbox: {
+            runtimeCaching: [
+                {
+                    urlPattern: 'https://vechain.github.io/token-registry/assets/',
+                    strategyOptions: {
+                        cacheName: 'git-static'
+                    }
+                }
+            ],
+            cacheNames: {
+                prefix: `explorer-${IS_MAIN ? 'mainnet' : 'testnet'}`,
+                suffix: Version,
+                precache: 'precache',
+                runtime: 'runtime'
+            }
         }
-      }
+    },
+    /*
+     ** Customize the progress-bar color
+     */
+    loading: { color: '#fff' },
+    /*
+     ** Global CSS
+     */
+    css: [
+        '@fortawesome/fontawesome-svg-core/styles.css',
+        '@/css/common.css',
+        !IS_MAIN ? '@/css/test.css' : '@/css/main.css'
+    ],
+    /*
+     ** Plugins to load before mounting the App
+     */
+    plugins: [
+        '~/plugins/filters.ts',
+        '~/plugins/fontawesome.ts',
+        '~/plugins/axios.ts',
+        { src: '~/plugins/init.ts', mode: 'client' },
+        { src: '~/plugins/captcha.ts', mode: 'client' },
+        { src: '~/plugins/clipboard.ts', mode: 'client' },
+        { src: '~/plugins/qrcode.ts', mode: 'client' },
+        { src: '~/plugins/sw.ts', mode: 'client' }
+    ],
+    /*
+     ** Nuxt.js dev-modules
+     */
+    buildModules: [
+        '@nuxt/typescript-build'
+        // Doc: https://github.com/nuxt-community/eslint-module
+        // '@nuxtjs/eslint-module',
+    ],
+    /**
+     * Analytics
+     * See https://github.com/nuxt-community/analytics-module
+     */
+    googleAnalytics: {
+        id: `UA-132391998-${IS_MAIN ? 3 : 4}`,
+        set: [
+            {
+                field: 'anonymizeIp',
+                value: 1
+            }
+        ],
+        dev: false,
+        autoTracking: {
+            pageviewTemplate(route) {
+                return {
+                    page: route.path,
+                    title: route.name,
+                    location: window.location.href
+                }
+            }
+        }
+    },
+    /*
+     ** Nuxt.js modules
+     */
+    modules: [
+        // Doc: https://bootstrap-vue.js.org
+        'bootstrap-vue/nuxt',
+        // Doc: https://axios.nuxtjs.org/usage
+        '@nuxtjs/axios',
+        '@nuxtjs/pwa',
+        '@nuxtjs/google-analytics',
+        '@blokwise/dynamic'
+    ],
+    /**
+     * BootstrapVue Config
+     * See https://bootstrap-vue.js.org/docs
+     */
+    bootstrapVue: bvConfig,
+    /*
+     ** Axios module configuration
+     ** See https://axios.nuxtjs.org/options
+     */
+    axios: {
+        proxy: true
+    },
+    /**
+     * https://github.com/chimurai/http-proxy-middleware#appusepath-proxy
+     */
+    proxy: {
+        '/api': {
+            target: process.env.API_URL,
+            agent: !process.env.API_URL
+                ? undefined
+                : process.env.API_URL.startsWith('https://')
+                    ? new https.Agent({ keepAlive: true })
+                    : new http.Agent({ keepAlive: true })
+        }
+    },
+    env: {
+        current: !IS_MAIN ? 'Testnet' : 'Mainnet',
+        Version,
+        networks: [
+            {
+                text: 'Main',
+                link: environment === 'dev'
+                    ? 'https://mainnet.dev.explore.vechain.org'
+                    : 'https://explore.vechain.org'
+            },
+            {
+                text: 'Test',
+                link: environment === 'dev'
+                    ? 'https://testnet.dev.explore.vechain.org'
+                    : 'https://explore-testnet.vechain.org'
+            }
+        ]
+    },
+    /*
+     ** Build configuration
+     */
+    build: {
+        /*
+         ** You can extend webpack config here
+         */
+        extend(config, ctx) { },
+        extractCSS: !IS_DEV,
+        optimization: {
+            splitChunks: {
+                cacheGroups: {
+                    styles: {
+                        name: 'theme',
+                        test: /\.(css|vue)$/,
+                        chunks: 'all',
+                        enforce: true
+                    }
+                }
+            }
+        }
     }
-  }
 }
