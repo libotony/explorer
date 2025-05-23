@@ -28,7 +28,7 @@ const verify = async (secret, response) => {
         if (e.response) {
             console.log(e.response.data)
         }
-            return false
+        return false
     }
 }
 
@@ -38,7 +38,7 @@ const captcha = (req, res, next) => {
             try {
                 const raw = await getRawBody(req, 'utf8')
                 const body = QS.parse(raw)
-                
+
                 const ret = await verify(secret, body['token'])
                 if (ret) {
                     const client = apiURL.startsWith('http://') ? http.request : https.request
@@ -46,11 +46,11 @@ const captcha = (req, res, next) => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Forwarded-For': req.headers['x-forwarded-for']||req.connection.remoteAddress
+                            'X-Forwarded-For': req.headers['x-forwarded-for'] || req.connection.remoteAddress
                         },
                     }, (response) => {
-                        res.writeHead(response.statusCode, response.headers);
-                        return response.pipe(res, {end: true});
+                        res.writeHead(response.statusCode, response.headers)
+                        return response.pipe(res, { end: true })
                     })
                     request.end(raw)
                     return

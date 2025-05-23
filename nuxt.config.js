@@ -17,7 +17,8 @@ export default {
   },
   serverMiddleware: [
     { path: '/', handler: morgan('tiny') },
-    { path: '/api/export', handler: '~/server/captcha.js' }
+    { path: '/api/export', handler: '~/server/captcha.js' },
+    { path: '/health', handler: '~/server/health.js' }
   ],
   mode: 'universal',
   /*
