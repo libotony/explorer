@@ -12,6 +12,9 @@ COPY . .
 # Install dependencies
 RUN npm ci
 
+# Install pm2
+RUN npm i -g pm2
+
 # Default port
 ENV PORT=8080
 
