@@ -62,6 +62,14 @@
                     </span>
                 </template>
             </ListItem>
+            <template v-if="!!item.baseFeePerGas">
+                <ListItem>
+                    <template slot="label">Base Fee</template>
+                    <template slot="item-content">
+                        <Fee :amount="item.baseFeePerGas"></Fee>
+                    </template>
+                </ListItem>
+            </template>
             <ListItem>
                 <template slot="label">Total Score</template>
                 <template slot="item-content">
@@ -137,13 +145,15 @@ import ListItem from '@/components/ListItem.vue'
 import AccountLink from '@/components/AccountLink.vue'
 import IdentBox from '@/components/IdentBox.vue'
 import Amount from '@/components/Amount.vue'
-import { Context } from '@nuxt/types'
+import Fee from '@/components/Fee.vue'
+
 @Component({
     components: {
         ListItem,
         IdentBox,
         AccountLink,
-        Amount
+        Amount,
+        Fee
     }
 })
 export default class BlockInfo extends Vue {
