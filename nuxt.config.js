@@ -27,6 +27,8 @@ export default {
             }
         }
     },
+    rootDir: process.cwd(),
+    buildDir: process.cwd() + '/.nuxt/',
     mode: 'universal',
     /*
      ** Headers of the page

@@ -8,4 +8,4 @@ npm run build
 echo "Build complete"
 
 echo "Starting..."
-pm2-runtime ecosystem.config.js
+pm2 list > /dev/null && pm2-runtime ecosystem.config.js
