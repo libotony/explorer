@@ -42,7 +42,7 @@ env:
 
 jobs:
   build-and-publish:
-    runs-on: docker-build-arm64
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ${{ env.workingDirectory }}
