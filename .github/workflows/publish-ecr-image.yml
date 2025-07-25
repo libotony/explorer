@@ -96,5 +96,5 @@ jobs:
         if: failure() && steps.docker-scan.outcome == 'failure'
         run: |
           aws ecr batch-delete-image \
-            --repository-name ${{env.projectName}} \
-            --image-ids versionTag=${{ env.versionTag }} versionTag=${{ env.latestTag }}
+            --repository-name vechain/${{env.projectName}} \
+            --image-ids imageTag=${{ env.versionTag }} imageTag=${{ env.latestTag }}
