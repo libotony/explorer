@@ -1,100 +1,100 @@
 name: Build & Publish Docker Image
 
 on:
-  workflow_call:
+  push:
+    tags:
+      - v.*
+  workflow_dispatch:
     inputs:
-      imageTag:
-        required: true
-        type: string
       latestTag:
+        description: Tag to identify most recently built image
         required: true
         type: string
+        default: latest
       workingDirectory:
+        description: Working directory for the build context
         required: true
         type: string
-      buildArgs:
-        required: false
-        type: string
-      packageName:
+        default: ./
+      projectName:
+        description: Name of the project
         required: true
         type: string
+        default: explore
       imagePlatform:
+        description: Platform for the Docker image
         required: false
         type: string
-      env:
-        required: true
-        type: string
+        default: linux/arm64
 
 # Required for authentication through GitHub OIDC
 permissions:
-  id-token: write # This is required for requesting the JWT
-  contents: read # This is required for actions/checkout
+  id-token: write  # This is required for requesting the JWT
+  contents: read   # This is required for actions/checkout
+
+env:
+  latestTag: ${{ inputs.latestTag || 'latest' }}
+  versionTag: ${{ github.ref_name }}
+  commitHash: ${{ github.sha }}
+  workingDirectory: ${{ inputs.workingDirectory || './' }}
+  projectName: ${{ inputs.projectName || 'explore' }}
+  imagePlatform: ${{ inputs.imagePlatform || 'linux/arm64' }}
 
 jobs:
   build-and-publish:
-    runs-on: ubuntu-latest
-
+    runs-on: docker-build-arm64
     defaults:
       run:
-        working-directory: ${{ inputs.workingDirectory }}
-
-    environment: ${{ inputs.env }}
+        working-directory: ${{ env.workingDirectory }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Determine AWS account ID and role
-        id: account
-        run: |
-            if [ "${{ inputs.env }}" == "prod" ]; then
-              echo "role_arn=${{ secrets.PROD_AWS_ACC_ROLE }}" >> $GITHUB_OUTPUT
-            else
-              echo "role_arn=${{ secrets.DEV_AWS_ACC_ROLE }}" >> $GITHUB_OUTPUT
-            fi
+          fetch-depth: 1
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            aws-region: eu-west-1
-            role-to-assume: ${{ steps.account.outputs.role_arn }}
+          aws-region: eu-west-1
+          role-to-assume: ${{ secrets.AWS_ACC_ROLE }}
 
       - name: Login To Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
+      - name: Build images and push
+        uses: docker/build-push-action@v6
         with:
-          platforms: ${{ inputs.imagePlatform }}
+          file: Dockerfile
+          platforms: ${{ env.imagePlatform }}
           build-args: |
-            ${{ inputs.buildArgs }}
+            APP_VERSION=${{ env.versionTag }}
           push: true
-          context: ${{ inputs.workingDirectory }}
+          context: ${{ env.workingDirectory }}
           provenance: false
           tags: |
-            ${{ steps.login-ecr.outputs.registry }}/vechain/${{ inputs.packageName }}:${{ inputs.imageTag }}
-            ${{ steps.login-ecr.outputs.registry }}/vechain/${{ inputs.packageName }}:${{ inputs.latestTag }}
+            ${{ steps.login-ecr.outputs.registry }}/vechain/${{ env.projectName }}:${{ env.versionTag }}
+            ${{ steps.login-ecr.outputs.registry }}/vechain/${{ env.projectName }}:${{ env.latestTag }}
+            ${{ steps.login-ecr.outputs.registry }}/vechain/${{ env.projectName }}:${{ env.commitHash }}
 
       - name: Scan Docker image
         id: docker-scan
-        uses: alexjurkiewicz/ecr-scan-image@v2.0.0
+        uses: alexjurkiewicz/ecr-scan-image@v3.0.0
         with:
-          repository: vechain/${{ inputs.packageName }}
-          tag: ${{ inputs.imageTag }}
-          fail_threshold: high
+          repository: ${{env.projectName}}
+          tag: ${{ env.versionTag }}
+          fail_threshold: medium
 
-      # - name: On Scan Failure
-      #   if: failure() && steps.docker-scan.outcome == 'failure'
-      #   run: |
-      #     aws ecr batch-delete-image \
-      #       --repository-name vechain/${{ inputs.packageName }} \
-      #       --image-ids imageTag=${{ inputs.imageTag }} imageTag=${{ inputs.latestTag }}
+      - name: On Scan Failure
+        if: failure() && steps.docker-scan.outcome == 'failure'
+        run: |
+          aws ecr batch-delete-image \
+            --repository-name ${{env.projectName}} \
+            --image-ids versionTag=${{ env.versionTag }} versionTag=${{ env.latestTag }}
