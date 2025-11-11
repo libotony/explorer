@@ -91,7 +91,7 @@
             <ListItem>
                 <template slot="label">Rewards</template>
                 <template slot="item-content">
-                    <Amount :amount="item.reward" sym="VTHO" />
+                    <BlockReward :fee="item.reward" :issuance="item.issuance" :delegator="item.delegator" />
                 </template>
             </ListItem>
             <template v-if="isMore">
@@ -146,14 +146,15 @@ import AccountLink from '@/components/AccountLink.vue'
 import IdentBox from '@/components/IdentBox.vue'
 import Amount from '@/components/Amount.vue'
 import Fee from '@/components/Fee.vue'
-
+import BlockReward from '@/components/BlockReward.vue'
 @Component({
     components: {
         ListItem,
         IdentBox,
         AccountLink,
         Amount,
-        Fee
+        Fee,
+        BlockReward
     }
 })
 export default class BlockInfo extends Vue {

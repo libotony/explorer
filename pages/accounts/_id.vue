@@ -80,7 +80,7 @@ export default class Account extends Vue {
         return this.account!.code
             ? 'Contract'
             : this.authority
-            ? 'Authority'
+            ? 'Validator'
             : 'Account'
     }
     get account() {

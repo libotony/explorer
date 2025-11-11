@@ -54,7 +54,7 @@
                 >{{row.item.txCount}}</nuxt-link>
             </template>
             <template v-slot:cell(reward)="row">
-                <Amount :amount="row.item.reward" />
+                <Amount :amount="calculateTotalReward(row.item.reward, row.item.issuance, row.item.delegator)" />
             </template>
         </b-table>
     </div>
@@ -62,8 +62,9 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import Amount from '@/components/Amount.vue'
+import BigNumber from 'bignumber.js'
 import { Context } from '@nuxt/types'
+import Amount from '@/components/Amount.vue'
 @Component({
     components: {
         Amount
@@ -126,6 +127,18 @@ export default class AccountBlocks extends Vue {
 
     get count() {
         return this.signedBlocks ? this.signedBlocks.count : 0
+    }
+
+    calculateTotalReward (reward: string | number, issuance?: string | number, delegator?: string | null): string {
+        let r = new BigNumber(reward || 0)
+        if (issuance) {
+            if (delegator) {
+                r = r.plus(new BigNumber(issuance).multipliedBy(30).dividedBy(100))
+            } else {
+                r = r.plus(new BigNumber(issuance))
+            }
+        }
+        return r.toFixed(16)
     }
 
     @Watch('$route')
